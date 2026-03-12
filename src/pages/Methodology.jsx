@@ -1,0 +1,123 @@
+const sections = [
+  {
+    id: 'how-compass-works',
+    title: 'How Compass Works',
+    content: [
+      'Compass Career Indicator is a three-layer assessment platform. Students first complete a 30-item RIASEC interest inventory and a 10-item Big Five personality measure. Their responses are automatically scored using validated psychometric algorithms, producing six RIASEC scores (0–7 scale) and five OCEAN trait scores (1–5 scale).',
+      'These scores are matched against a database of 100+ careers using a Euclidean distance algorithm adapted from O*NET\'s career guidance research. Three match views are generated: a Holland code match, a personality match, and a blended match that combines both with hobby relevance scoring.',
+      'Finally, Claude (Anthropic\'s AI model) generates personalised narrative content — including an executive snapshot, career rationale, demand data, and cluster analysis — tailored to each student\'s specific profile, curriculum, hobbies, and work preferences.',
+    ]
+  },
+  {
+    id: 'riasec',
+    title: 'The RIASEC Model',
+    content: [
+      'The RIASEC model — also called Holland\'s theory of vocational personalities — was developed by Dr. John L. Holland in 1959 and published formally in "Making Vocational Choices" (1973, 1985, 1997). It is today the most widely used career interest framework globally, forming the basis of career guidance systems in over 50 countries.',
+      'The model describes six broad interest themes arranged in a hexagonal structure: Realistic (R) — hands-on, technical, and outdoor work; Investigative (I) — research, analysis, and problem-solving; Artistic (A) — creative expression and imagination; Social (S) — helping, teaching, and supporting people; Enterprising (E) — leadership, persuasion, and entrepreneurship; Conventional (C) — organization, detail, and systems.',
+      'Holland\'s core proposition is that people who find work environments matching their dominant interest themes tend to experience greater satisfaction, better performance, and longer career tenure. While the research is robust for adults, we apply it cautiously with secondary students — acknowledging that interests at age 15–18 are exploratory and may shift significantly with experience.',
+      'Compass uses RIASEC career profile data from O*NET (Occupational Information Network, v28.0), the US Department of Labor\'s primary career information database, which provides RIASEC ratings for over 1,000 occupations based on systematic job analysis.',
+    ]
+  },
+  {
+    id: 'big-five',
+    title: 'The Big Five Personality Model',
+    content: [
+      'The Big Five personality model (OCEAN) was developed primarily by Robert McCrae and Paul Costa Jr. in 1987 and is today the dominant paradigm in personality psychology. Unlike popular typology systems (MBTI, Enneagram), the Big Five measures traits on continuous spectrums based on decades of cross-cultural empirical research.',
+      'The five dimensions are: Openness to Experience (O) — curiosity, creativity, and willingness to try new things; Conscientiousness (C) — organization, reliability, and goal-directed behaviour; Extraversion (E) — sociability, assertiveness, and positive emotionality; Agreeableness (A) — cooperation, empathy, and prosocial orientation; Neuroticism (N) — emotional sensitivity and stress reactivity.',
+      'We label Neuroticism as "Stress Sensitivity" in all student-facing materials, as this framing is more constructive and less stigmatizing for young people. High scores indicate greater emotional reactivity — not a disorder or weakness.',
+      'Research consistently links Conscientiousness to academic achievement, Openness to creative career success, and Extraversion to leadership emergence. We use Big Five scores to enrich our career matching and provide rule-based guidance on study and work habits.',
+    ]
+  },
+  {
+    id: 'matching',
+    title: 'How We Match Careers',
+    content: [
+      'Our matching algorithm uses Euclidean distance on six RIASEC dimensions. For each career in our database, we calculate: distance = √[(R_student − R_career)² + (I_student − I_career)² + (A_student − A_career)² + (S_student − S_career)² + (E_student − E_career)² + (C_student − C_career)²]',
+      'We convert distance to a match percentage: matchPct = max(0, round((1 − distance/25) × 100)). A maximum distance of 25 is used as the normalization ceiling based on the 0–7 scale across 6 dimensions.',
+      'Three match types are calculated: (1) Holland match — pure RIASEC distance; (2) Personality match — Big Five scores are mapped to RIASEC dimensions (O→I+A, C→C, E→E, A→S) and distance is calculated similarly; (3) Blended match — 40% Holland + 35% Personality + 25% Hobby relevance, where hobby relevance is calculated by tokenizing hobby text and matching against career titles and descriptions.',
+      'Adjacent career clusters are identified by grouping matches by US Department of Labor Standard Occupational Classification (SOC) code prefixes (first 2 digits), then surfacing careers in the same occupational family that did not appear in the top matches.',
+    ]
+  },
+  {
+    id: 'data-sources',
+    title: 'Our Data Sources',
+    content: [
+      'O*NET v28.0: Our primary career data source. O*NET (Occupational Information Network) is maintained by the US Department of Labor and provides RIASEC ratings, task lists, skills, education requirements, and work context data for over 1,000 occupations. All SOC codes are from this database.',
+      'Modern Careers Layer: We supplement O*NET with 20 emerging careers not fully captured in traditional occupational databases — including roles in AI, creator economy, sustainability, digital health, and climate tech. These are research-informed by industry trends and job market analysis.',
+      'University Data: Our 70-university dataset covers institutions in 7 countries (USA, UK, Canada, India, Australia, UAE, Germany). Data includes QS World University Rankings 2024, indicative tuition fees, IELTS requirements, and program offerings. Data may not reflect the most current admissions requirements — always verify with institutions directly.',
+      'AI Content: Narrative content is generated by Claude (claude-sonnet-4-20250514, Anthropic). All AI output is clearly labelled and uses hedged language (may, might, could). AI content should be treated as an informed starting point, not definitive career advice.',
+    ]
+  },
+  {
+    id: 'what-compass-does',
+    title: 'What Compass Does and Does Not Do',
+    content: [
+      'COMPASS DOES: Provide a structured, research-informed starting point for career conversations. Use validated psychometric frameworks applied to secondary-school-age students. Generate AI-personalised analysis tailored to each student\'s profile. Surface career clusters and adjacent paths the student may not have considered. Link career paths to university programs and geographic demand data.',
+      'COMPASS DOES NOT: Measure intelligence, academic ability, or aptitude for any field. Make career decisions or provide prescriptive advice. Replace professional career counselling or school guidance. Guarantee accuracy of AI-generated content, salary data, or demand projections. Provide a fixed or permanent career profile — interests change, especially during adolescence.',
+    ]
+  },
+  {
+    id: 'ethics',
+    title: 'Ethical Use & Privacy',
+    content: [
+      'Student data collected through Compass (name, date of birth, school, curriculum, assessment responses) is stored in a secure Supabase PostgreSQL database with row-level security policies. No data is shared with third parties or used for any purpose other than generating the student\'s report.',
+      'AI-generated content is produced server-side through Supabase Edge Functions. Student data is included in prompts only to generate personalised content — it is not used to train AI models or stored by Anthropic beyond the API request lifecycle.',
+      'Compass is designed for use within school guidance programs under the oversight of counsellors and educators. Results should always be interpreted in a supportive, growth-oriented context by trained adults — not used to make unsupported streaming or subject selection decisions.',
+      'For questions about data handling, privacy, or the methodology behind this platform, contact your school\'s career guidance team or the Compass platform administrator.',
+    ]
+  },
+]
+
+export default function Methodology() {
+  return (
+    <div className="max-w-3xl mx-auto px-4 py-12">
+      {/* Header */}
+      <div className="mb-12">
+        <h1 className="font-display text-4xl text-navy mb-4">Methodology</h1>
+        <p className="text-muted font-body text-lg leading-relaxed">
+          A transparent account of the science, data, and algorithms behind the Compass Career Indicator.
+        </p>
+      </div>
+
+      {/* Sections */}
+      <div className="space-y-14">
+        {sections.map((section) => (
+          <div key={section.id} id={section.id} className="scroll-mt-20">
+            <div className="border-l-4 border-gold pl-5 mb-5">
+              <h2 className="font-display text-2xl text-navy">{section.title}</h2>
+            </div>
+            <div className="space-y-4">
+              {section.content.map((para, i) => (
+                <p key={i} className="text-navy/80 font-body leading-relaxed">{para}</p>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* References */}
+      <div className="mt-16 pt-8 border-t border-cborder">
+        <h3 className="font-display text-lg text-navy mb-4">Key References</h3>
+        <ul className="space-y-2 text-sm text-muted font-body">
+          {[
+            'Holland, J.L. (1997). Making vocational choices: A theory of vocational personalities and work environments (3rd ed.). Psychological Assessment Resources.',
+            'McCrae, R.R., & Costa, P.T. Jr. (1987). Validation of the five-factor model of personality across instruments and observers. Journal of Personality and Social Psychology, 52(1), 81–90.',
+            'O*NET Resource Center (2024). O*NET OnLine v28.0. US Department of Labor, Employment & Training Administration.',
+            'Rounds, J., & Su, R. (2014). The nature and power of interests. Current Directions in Psychological Science, 23(2), 98–103.',
+          ].map((ref, i) => (
+            <li key={i} className="flex gap-2">
+              <span className="text-gold shrink-0">•</span>
+              <span>{ref}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <div className="mt-8 pt-6 border-t border-cborder text-center">
+        <p className="text-muted text-xs font-body">
+          Compass Career Indicator v2.0 &bull; O*NET data v28.0 &bull; AI by Claude (Anthropic) &bull; Proplr 2024
+        </p>
+      </div>
+    </div>
+  )
+}
