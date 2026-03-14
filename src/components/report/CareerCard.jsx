@@ -70,9 +70,14 @@ export default function CareerCard({ career, rank, rationale, skillsData, demand
               <p className="text-xs text-muted font-mono-data mt-0.5">SOC {career.soc_code}</p>
             )}
             {career.salary_usd_low && (
-              <p className="text-sm text-success font-semibold mt-1">
-                ${career.salary_usd_low?.toLocaleString()}k – ${career.salary_usd_high?.toLocaleString()}k / year
-              </p>
+              <div className="mt-1">
+                <p className="text-sm text-success font-semibold">
+                  AED {Math.round(career.salary_usd_low * 3.67).toLocaleString()}k – AED {Math.round(career.salary_usd_high * 3.67).toLocaleString()}k / year
+                </p>
+                <p className="text-xs text-muted font-mono-data">
+                  (${career.salary_usd_low?.toLocaleString()}k – ${career.salary_usd_high?.toLocaleString()}k USD)
+                </p>
+              </div>
             )}
           </div>
           <MatchGauge score={score} size={56} />

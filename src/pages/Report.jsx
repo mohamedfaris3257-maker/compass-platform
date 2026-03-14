@@ -23,6 +23,7 @@ import ChatWidget from '../components/report/ChatWidget'
 import BringingItTogether from '../components/report/BringingItTogether'
 import NextSteps from '../components/report/NextSteps'
 import ImportantNotes from '../components/report/ImportantNotes'
+import KnownInterestPaths from '../components/report/KnownInterestPaths'
 
 const TOC_ITEMS = [
   { id: 'cover',              label: 'Cover' },
@@ -33,6 +34,7 @@ const TOC_ITEMS = [
   { id: 'careers',            label: 'Career Matches' },
   { id: 'comparison',         label: 'Career Comparison' },
   { id: 'adjacent',           label: 'Adjacent Paths' },
+  { id: 'known-paths',        label: 'Your Interest Areas' },
   { id: 'emerging',           label: 'Emerging Careers' },
   { id: 'try-before',         label: 'Try Before You Choose' },
   { id: 'gap-analysis',       label: 'Gap Analysis' },
@@ -266,6 +268,7 @@ export default function Report() {
         <CareerMatches matches={matches} report={report} assessment={assessment} reportComplete={reportComplete} />
         <CareerComparison matches={matches} report={report} />
         <AdjacentPaths clusters={clusters} report={report} reportComplete={reportComplete} />
+        <KnownInterestPaths assessment={assessment} />
         <EmergingCareers clusters={clusters} />
         <TryBeforeYouChoose report={report} reportComplete={reportComplete} />
         <GapAnalysis report={report} reportComplete={reportComplete} />

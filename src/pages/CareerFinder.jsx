@@ -90,9 +90,14 @@ function CareerSearchCard({ career, savedIds, onSave, studentProfile }) {
 
           {/* Salary */}
           {career.salary_usd_low && (
-            <p className="text-sm text-success font-semibold mb-2">
-              ${career.salary_usd_low}k – ${career.salary_usd_high}k / year
-            </p>
+            <div className="mb-2">
+              <p className="text-sm text-success font-semibold">
+                AED {Math.round(career.salary_usd_low * 3.67).toLocaleString()}k – AED {Math.round(career.salary_usd_high * 3.67).toLocaleString()}k / year
+              </p>
+              <p className="text-[10px] text-muted font-mono-data">
+                (${career.salary_usd_low}k – ${career.salary_usd_high}k USD)
+              </p>
+            </div>
           )}
 
           {/* Description */}
@@ -238,11 +243,8 @@ export default function CareerFinder() {
         if (debouncedSearch) {
           query = query.ilike('title', `%${debouncedSearch}%`)
         }
-        if (selectedThemes.length > 0) {
-          // Filter: at least one top theme must match
-          const themeFilters = selectedThemes.map(t => `${t.toLowerCase()}_score.gte.4`)
-          query = query.or(themeFilters.join(','))
-        }
+        // NOTE: RIASEC theme filter is applied client-side (see below) to avoid
+        // PostgREST .or() format issues across different Supabase client versions.
         if (socGroup && socGroup !== 'modern') {
           query = query.like('soc_code', `${socGroup}%`)
         }
@@ -266,11 +268,19 @@ export default function CareerFinder() {
 
         if (error) throw error
 
+        // Client-side RIASEC theme filter — at least one selected theme must score ≥ 4
+        let filtered = data || []
+        if (selectedThemes.length > 0) {
+          filtered = filtered.filter(c =>
+            selectedThemes.some(t => (c[`${t.toLowerCase()}_score`] || 0) >= 4)
+          )
+        }
+
         if (reset) {
-          setCareers(data || [])
+          setCareers(filtered)
           setPage(0)
         } else {
-          setCareers(prev => [...prev, ...(data || [])])
+          setCareers(prev => [...prev, ...filtered])
         }
         setHasMore((data || []).length === PAGE_SIZE)
       } catch (err) {

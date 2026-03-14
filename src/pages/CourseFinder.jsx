@@ -58,13 +58,32 @@ export default function CourseFinder() {
       if (selectedCountries.length > 0) {
         query = query.in('country', selectedCountries)
       }
+
+      // Fetch broadly then filter client-side.
+      // Server-side .contains() requires a jsonb column — client-side
+      // filtering works regardless of how the DB stores subject_areas.
+      const { data, error } = await query.limit(200)
+      if (error) throw error
+
+      let results = data || []
+
+      // Client-side subject filter — handles array, string, or missing values
       if (selectedSubject) {
-        query = query.contains('subject_areas', [selectedSubject])
+        const needle = selectedSubject.toLowerCase()
+        results = results.filter(u => {
+          if (Array.isArray(u.subject_areas)) {
+            return u.subject_areas.some(s =>
+              s.toLowerCase().includes(needle) || needle.includes(s.toLowerCase())
+            )
+          }
+          if (typeof u.subject_areas === 'string') {
+            return u.subject_areas.toLowerCase().includes(needle)
+          }
+          return false
+        })
       }
 
-      const { data, error } = await query.limit(30)
-      if (error) throw error
-      setResults(data || [])
+      setResults(results.slice(0, 30))
     } catch (err) {
       toast(`Error searching programs: ${err.message}`, 'error')
     } finally {

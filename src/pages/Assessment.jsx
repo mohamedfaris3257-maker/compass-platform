@@ -26,6 +26,22 @@ const GRADES    = ['Grade 9', 'Grade 10', 'Grade 11', 'Grade 12', 'Year 10', 'Ye
 const RIASEC_PER_PAGE = 5
 const BF_PER_PAGE     = 5
 
+// Step 0 — known interest areas (optional, used for Adjacent Pathways report section)
+const KNOWN_INTERESTS_OPTIONS = [
+  { emoji: '💻', label: 'Technology & Computing' },
+  { emoji: '🏥', label: 'Healthcare & Medicine' },
+  { emoji: '🎨', label: 'Arts & Creative Design' },
+  { emoji: '💼', label: 'Business & Entrepreneurship' },
+  { emoji: '🔬', label: 'Science & Research' },
+  { emoji: '📚', label: 'Education & Teaching' },
+  { emoji: '⚖️', label: 'Law & Policy' },
+  { emoji: '🔧', label: 'Engineering & Architecture' },
+  { emoji: '🌿', label: 'Environment & Sustainability' },
+  { emoji: '🎬', label: 'Media & Entertainment' },
+  { emoji: '💰', label: 'Finance & Economics' },
+  { emoji: '✈️', label: 'Aviation & Tourism' },
+]
+
 // Step 3 data
 const VALUES_OPTIONS = [
   'Making a social impact', 'Innovation & creativity', 'Financial success',
@@ -252,6 +268,7 @@ export default function Assessment() {
   const [selectedWorkPrefs, setSelectedWorkPrefs] = useState([])
   const [selectedHobbies,  setSelectedHobbies]  = useState([])
   const [selectedGoals,    setSelectedGoals]     = useState([])
+  const [knownInterests,   setKnownInterests]   = useState([])
   const [riasecPage, setRiasecPage] = useState(0)
   const [bfPage,     setBfPage]     = useState(0)
   const [submitting, setSubmitting] = useState(false)
@@ -313,6 +330,7 @@ export default function Assessment() {
           work_preferences: selectedWorkPrefs,
           values_alignment: selectedValues,
           self_stated_goals: selectedGoals,
+          known_interests:  knownInterests,
         })
         .select('id')
         .single()
@@ -433,7 +451,37 @@ export default function Assessment() {
                   onFocus={onFocus} onBlur={onBlur}
                 />
               </div>
+
             </div>
+          </div>
+
+          {/* Known Interests — optional chip selector */}
+          <div style={{ ...cardStyle, marginTop: 20 }}>
+            <SectionHeading
+              title="Do you already know what interests you?"
+              sub="Select any fields you're already drawn to (optional — skip if unsure)"
+            />
+            <div style={{
+              display: 'flex', flexWrap: 'wrap', gap: 10, marginBottom: 8,
+            }}>
+              {KNOWN_INTERESTS_OPTIONS.map(({ emoji, label }) => {
+                const sel = knownInterests.includes(label)
+                return (
+                  <EmojiChip
+                    key={label}
+                    emoji={emoji}
+                    label={label}
+                    selected={sel}
+                    onClick={() => toggle(knownInterests, setKnownInterests, label)}
+                  />
+                )
+              })}
+            </div>
+            {knownInterests.length > 0 && (
+              <p style={{ fontSize: 12, color: '#229ebc', fontFamily: 'Inter, sans-serif', marginTop: 10 }}>
+                ✓ We'll include an Adjacent Pathways section in your report based on your selections.
+              </p>
+            )}
           </div>
 
           <div style={{ marginTop: 20 }}>
